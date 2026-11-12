@@ -9,9 +9,19 @@ for architecture in arm64 x86_64; do
   swift build -c release --arch "$architecture" "${swift_flags[@]}"
 done
 mkdir -p dist
-app='dist/QuotaNest.app'
+app="${QUOTANEST_APP_DIR:-dist/QuotaNest.app}"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 lipo -create .build/arm64-apple-macosx/release/QuotaNest .build/x86_64-apple-macosx/release/QuotaNest -output "$app/Contents/MacOS/QuotaNest"
+# SwiftPM can add its test-support toolchain directory when tests import the
+# executable. It is not a distributable runtime path; remove it before signing.
+python3 - "$app/Contents/MacOS/QuotaNest" <<'RPATH'
+import re, subprocess, sys
+binary = sys.argv[1]
+commands = subprocess.check_output(['otool', '-arch', 'all', '-l', binary], text=True)
+for path in sorted(set(re.findall(r'\bpath (.+?) \(offset \d+\)', commands))):
+    if '/Toolchains/' in path and '/usr/lib/swift' in path:
+        subprocess.run(['xcrun', 'install_name_tool', '-delete_rpath', path, binary], check=True)
+RPATH
 cp Assets/AppIcon.icns "$app/Contents/Resources/AppIcon.icns"
 python3 - "$app" "$(cat VERSION)" <<'PLIST'
 import plistlib,sys
