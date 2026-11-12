@@ -3,6 +3,9 @@
 import argparse
 import plistlib
 import zipfile
+import re
+import subprocess
+import tempfile
 from pathlib import Path
 
 p = argparse.ArgumentParser()
@@ -29,6 +32,13 @@ with zipfile.ZipFile(a.archive) as z:
     assert z.read('QuotaNest.app/Contents/Resources/AppIcon.icns').startswith(b'icns')
     assert info['LSMinimumSystemVersion'] == '14.0'
     assert info['LSUIElement'] is True
+    with tempfile.TemporaryDirectory() as temporary:
+        binary = Path(temporary) / 'QuotaNest'
+        binary.write_bytes(z.read('QuotaNest.app/Contents/MacOS/QuotaNest'))
+        commands = subprocess.check_output(['otool', '-arch', 'all', '-l', str(binary)], text=True)
+        paths = re.findall(r'\bpath (.+?) \(offset \d+\)', commands)
+        if any('/Toolchains/' in path or '/CommandLineTools/' in path for path in paths):
+            raise SystemExit('Developer toolchain runtime search path in release; do not publish')
     for name in names:
         if any(secret in z.read(name) for secret in secrets):
             raise SystemExit('Credential material found in archive; do not publish')
