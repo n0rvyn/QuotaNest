@@ -7,6 +7,7 @@ Current release scope: **Volcengine Ark**, including Agent Plan, Coding Plan, an
 - Lowest remaining plan window in the menu bar.
 - Native popover with quota periods, provider reset times, enabled resources and refresh status.
 - Refreshes every five minutes, on wake, or manually.
+- Optional Launch at Login switch in Settings, managed by macOS.
 - Access Key and Secret Key entered in Settings and stored as one record in macOS Keychain.
 - Independent results and errors for each plan; failed refreshes retain the previous successful figures and timestamp.
 - Changing credentials clears prior account snapshots and rejects its late responses.
@@ -40,7 +41,7 @@ open -a QuotaNest
 
 Settings opens on first launch. Opening the app again shows Settings. Saved credentials remain hidden until you choose **Show saved credentials**. Monitoring reads them automatically and retains them in memory between refreshes.
 
-The local build uses ad-hoc signing. Rebuilding changes its identity and can require Keychain authorization again; ordinary relaunches of the same build preserve its identity.
+Published apps use Developer ID signing and Apple notarization. The local build defaults to ad-hoc signing; set `QUOTANEST_SIGN_IDENTITY` to your Developer ID Application identity for a signed build. Signed releases must be notarized and stapled before publication.
 
 ## Branches and releases
 

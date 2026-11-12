@@ -1,4 +1,5 @@
 import SwiftUI
+import ServiceManagement
 import ArkCore
 
 enum Layout {
@@ -10,7 +11,7 @@ enum Layout {
     static let compact: CGFloat = 6
     static let corner: CGFloat = 10
     static let settingsWidth: CGFloat = 480
-    static let settingsHeight: CGFloat = 290
+    static let settingsHeight: CGFloat = 350
     static let settingsPadding: CGFloat = 24
     static let settingsSpacing: CGFloat = 20
 }
@@ -177,6 +178,8 @@ struct CredentialsView: View {
     @State private var message: String?
     @State private var failed = false
     @State private var revealingSavedCredentials = false
+    @State private var loginStatus = SMAppService.mainApp.status
+    @State private var loginError: String?
     var body: some View {
         VStack(alignment: .leading, spacing: Layout.settingsSpacing) {
             HStack(spacing: Layout.gap) {
@@ -203,6 +206,27 @@ struct CredentialsView: View {
                 .accessibilityLabel("Secret Access Key")
                 .labelsHidden().textFieldStyle(.roundedBorder).controlSize(.large)
                 .accessibilityIdentifier("secretKey")
+            }
+            VStack(alignment: .leading, spacing: Layout.compact) {
+                Toggle("Launch at Login", isOn: Binding(
+                    get: { loginStatus == .enabled || loginStatus == .requiresApproval },
+                    set: { enabled in
+                        do {
+                            if enabled { try SMAppService.mainApp.register() }
+                            else { try SMAppService.mainApp.unregister() }
+                        } catch { loginError = error.localizedDescription }
+                        loginStatus = SMAppService.mainApp.status
+                    }
+                ))
+                .toggleStyle(.checkbox)
+                .accessibilityIdentifier("launchAtLogin")
+                if loginStatus == .requiresApproval {
+                    HStack {
+                        Text("Approval required").foregroundStyle(.secondary)
+                        Button("Open Login Items") { SMAppService.openSystemSettingsLoginItems() }
+                            .buttonStyle(.link)
+                    }.font(.caption)
+                }
             }
             Spacer(minLength: 0)
             HStack(alignment: .center, spacing: Layout.gap) {
@@ -248,5 +272,14 @@ struct CredentialsView: View {
         .fontWeight(.regular)
         .padding(Layout.settingsPadding)
         .frame(width: Layout.settingsWidth, height: Layout.settingsHeight)
+        .onAppear { loginStatus = SMAppService.mainApp.status }
+        .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
+            loginStatus = SMAppService.mainApp.status
+        }
+        .alert("Couldn’t Update Launch at Login", isPresented: Binding(
+            get: { loginError != nil }, set: { if !$0 { loginError = nil } }
+        )) {
+            Button("OK", role: .cancel) { loginError = nil }
+        } message: { Text(loginError ?? "") }
     }
 }

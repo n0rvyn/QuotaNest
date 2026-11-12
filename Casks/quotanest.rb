@@ -1,6 +1,6 @@
 cask "quotanest" do
-  version "0.1.0"
-  sha256 "c4c295fc6fe4dd5ca94d280d3e1db464410ee466e1fde25e3fc3795bd07c4b29"
+  version "0.1.1"
+  sha256 "4f2b0de38f77ecdb0889c8458a57e9a5765908d75ad3d735c98f82440766b53d"
 
   url "https://github.com/n0rvyn/QuotaNest/releases/download/v#{version}/QuotaNest-#{version}-macos.zip"
   name "QuotaNest"
