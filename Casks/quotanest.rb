@@ -7,7 +7,7 @@ cask "quotanest" do
   desc "Menu bar monitor for AI resource and subscription quotas"
   homepage "https://github.com/n0rvyn/QuotaNest"
 
-  depends_on macos: ">= :sonoma"
+  depends_on macos: :sonoma
 
   app "QuotaNest.app"
 end
