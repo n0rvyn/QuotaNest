@@ -30,12 +30,12 @@ The supplied `.env` is excluded from version control and release bundles. The su
 
 ## Homebrew
 
-The source formula builds locally, like KiwiBar. Requires macOS 14+ and Xcode 16+ (Swift 6).
+The Cask installs the prebuilt app into `/Applications`. Requires macOS 14+; Xcode is only needed to build from source.
 
 ```sh
 brew tap n0rvyn/quotanest https://github.com/n0rvyn/QuotaNest
-brew install n0rvyn/quotanest/quotanest
-open "$(brew --prefix quotanest)/QuotaNest.app"
+brew install --cask n0rvyn/quotanest/quotanest
+open -a QuotaNest
 ```
 
 Settings opens on first launch. Opening the app again shows Settings. Saved credentials remain hidden until you choose **Show saved credentials**. Monitoring reads them automatically and retains them in memory between refreshes.
@@ -47,7 +47,7 @@ The local build uses ad-hoc signing. Rebuilding changes its identity and can req
 - `dev`: daily development.
 - `main`: milestone releases merged from `dev`.
 - Publish a versioned GitHub release only after build, tests, account checks and native UI verification.
-- Homebrew formula builds the checksum-verified source release locally. The release also contains a universal macOS app archive.
+- Homebrew Cask installs the checksum-verified universal app release into `/Applications`. Update it with `brew upgrade --cask quotanest`.
 
 ## Roadmap
 
