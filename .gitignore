@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+.build/
+dist/
+.DS_Store
+.swiftpm/
+# User-supplied vendor reference; do not republish third-party PDF.
+API 签名调用指南_文档指南_1792489407.pdf
+
+__pycache__/
+*.pyc
+# Local planning and diagnostic history are not part of the public release.
+docs/verification.md
+docs/06-plans/
