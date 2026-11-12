@@ -39,6 +39,8 @@ brew install --cask n0rvyn/quotanest/quotanest
 open -a QuotaNest
 ```
 
+If you previously installed the source Formula, remove it with `brew uninstall --formula quotanest`, then install the Cask above. If macOS previously rejected an older Cask installation, use `brew uninstall --cask quotanest` followed by the Cask install command for a fresh installation. Ordinary uninstall preserves your Keychain credentials.
+
 Settings opens on first launch. Opening the app again shows Settings. Saved credentials remain hidden until you choose **Show saved credentials**. Monitoring reads them automatically and retains them in memory between refreshes.
 
 Published apps use Developer ID signing and Apple notarization. The local build defaults to ad-hoc signing; set `QUOTANEST_SIGN_IDENTITY` to your Developer ID Application identity for a signed build. Signed releases must be notarized and stapled before publication.
