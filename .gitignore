@@ -13,3 +13,6 @@ __pycache__/
 # Local planning and diagnostic history are not part of the public release.
 docs/verification.md
 docs/06-plans/
+
+# Local optional CI draft; current GitHub token has no workflow scope.
+.github/workflows/ci.yml
